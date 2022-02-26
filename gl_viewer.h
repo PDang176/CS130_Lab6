@@ -2,6 +2,7 @@
 #define GL_VIEWER_H
 
 #include "gl_arcball.h"
+
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else

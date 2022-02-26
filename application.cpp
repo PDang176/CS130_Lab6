@@ -16,6 +16,10 @@
 
 #define MAX_POINT_SIZE 8
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 using namespace std;
 
 // convert float color to 32-bit color
@@ -72,14 +76,43 @@ void application::draw_line_DDA(int x0, int y0, int x1, int y1, const vec3& line
 // https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm/
 void application::draw_line_MPA(int x0, int y0, int x1, int y1, const vec3& linecolor)
 {
-    // TODO: NOT WORKING CODE (PUT BETTER CODE HERE!!)
-    float dx = x1 - x0;
-    float dy = y1 - y0;
+    int dx = abs(x1 - x0);
+    int dy = abs(y1 - y0);
 
-    float m = dy/dx;
-    float b = y0 - m*x0;
-    for(int x = x0; x < x1; ++x)
-          set_pixel(x, m*x + b,linecolor);
+    int yi = y0 < y1 ? 1 : -1;
+    int xi = x0 < x1 ? 1 : -1;
+
+    int x = x0;
+    int y = y0;
+
+    if(dy < dx){ // About x-axis
+        int D = 2 * dy - dx;
+        while(x != x1){
+            set_pixel(x, y, linecolor);
+            if(D > 0){
+                y += yi;
+                D += 2 * (dy - dx);
+            }
+            else{
+                D += 2 * dy;
+            }
+            x += xi;
+        }
+    }
+    else{ // About y-axis
+        int D = 2 * dx - dy;
+        while(y != y1){
+            set_pixel(x, y, linecolor);
+            if(D > 0){
+                x += xi;
+                D += 2 * (dx - dy);
+            }
+            else{
+                D += 2 * dx;
+            }
+            y += yi;
+        }
+    }
 }
 
 // DDA or MPA algorithms are used based on the mode.
